@@ -1,15 +1,12 @@
+module Day02 (solve1, solve2) where
+
 import Data.List (isPrefixOf, sort)
 import Data.Maybe (fromJust)
-
-import Runner (runner)
 
 {-|
   Solver for Day 2 of the Advent of Code 2015
   Problem description: https://adventofcode.com/2015/day/2
 -}
-
-main :: IO ()
-main = runner solve1 solve2
 
 solve1 :: [Char] -> Int
 solve1 = sum . map squareFootage . readDimensions

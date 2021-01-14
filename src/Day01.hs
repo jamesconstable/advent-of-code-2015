@@ -1,16 +1,13 @@
 {-# LANGUAGE LambdaCase #-}
 
-import Data.Maybe (fromJust)
+module Day01 (solve1, solve2) where
 
-import Runner (runner)
+import Data.Maybe (fromJust)
 
 {-|
   Solver for Day 1 of the Advent of Code 2015
   Problem description: https://adventofcode.com/2015/day/1
 -}
-
-main :: IO ()
-main = runner solve1 solve2
 
 solve1 :: [Char] -> Int
 solve1 input = length (filter (== '(') input) - length (filter (== ')') input)

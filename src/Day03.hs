@@ -1,23 +1,23 @@
 {-# LANGUAGE LambdaCase #-}
 
+module Day03 (solve1, solve2) where
+
 import Data.Map ((!))
 import Data.Maybe (fromJust, maybe)
 
 import qualified Data.Map as M
 import qualified Data.Set as S
 
-import Runner (runner)
-
 {-|
   Solver for Day 3 of the Advent of Code 2015
   Problem description: https://adventofcode.com/2015/day/3
 -}
 
-main :: IO ()
-main = runner (solve 1) (solve 2)
+solve1 :: [Char] -> Int
+solve1 = length . visitHouses 1
 
-solve :: Int -> [Char] -> Int
-solve n = length . visitHouses n
+solve2 :: [Char] -> Int
+solve2 = length . visitHouses 2
 
 visitHouses :: Int -> [Char] -> S.Set (Int, Int)
 visitHouses n =
