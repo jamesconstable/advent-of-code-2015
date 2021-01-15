@@ -28,12 +28,14 @@ library
       Day01
       Day02
       Day03
+      Day04
   other-modules:
       Paths_aoc2015
   hs-source-dirs:
       src
   build-depends:
-      base >=4.7 && <5
+      MissingH
+    , base >=4.7 && <5
     , containers
   default-language: Haskell2010
 
@@ -45,7 +47,8 @@ executable aoc2015-exe
       app
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      aoc2015
+      MissingH
+    , aoc2015
     , base >=4.7 && <5
     , containers
   default-language: Haskell2010

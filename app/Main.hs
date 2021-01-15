@@ -5,11 +5,13 @@ import System.Environment (getArgs)
 import qualified Day01
 import qualified Day02
 import qualified Day03
+import qualified Day04
 
 solvers = [
   [Day01.solve1, Day01.solve2],
   [Day02.solve1, Day02.solve2],
-  [Day03.solve1, Day03.solve2]]
+  [Day03.solve1, Day03.solve2],
+  [Day04.solve1, Day04.solve2]]
 
 {-|
    Provides a common interface for running solvers.
