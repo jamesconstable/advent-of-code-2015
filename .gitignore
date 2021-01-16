@@ -1,5 +1,6 @@
 input.txt
 input2.txt
+*.swp
 
 dist
 dist-*
