@@ -11,6 +11,7 @@ import qualified Day06
 import qualified Day07
 import qualified Day08
 import qualified Day09
+import qualified Day10
 
 solvers = [
   [Day01.solve1, Day01.solve2],
@@ -21,7 +22,8 @@ solvers = [
   [Day06.solve1, Day06.solve2],
   [Day07.solve1, Day07.solve2],
   [Day08.solve1, Day08.solve2],
-  [Day09.solve1, Day09.solve2]]
+  [Day09.solve1, Day09.solve2],
+  [Day10.solve1, Day10.solve2]]
 
 {-|
    Provides a common interface for running solvers.
