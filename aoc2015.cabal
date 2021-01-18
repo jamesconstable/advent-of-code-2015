@@ -35,6 +35,7 @@ library
       Day08
       Day09
       Day10
+      Day11
   other-modules:
       Paths_aoc2015
   hs-source-dirs:
@@ -45,6 +46,7 @@ library
     , containers
     , ghc
     , split
+    , utility-ht
   default-language: Haskell2010
 
 executable aoc2015-exe
@@ -61,4 +63,5 @@ executable aoc2015-exe
     , containers
     , ghc
     , split
+    , utility-ht
   default-language: Haskell2010

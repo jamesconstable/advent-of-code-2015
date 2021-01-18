@@ -12,18 +12,7 @@ import qualified Day07
 import qualified Day08
 import qualified Day09
 import qualified Day10
-
-solvers = [
-  [Day01.solve1, Day01.solve2],
-  [Day02.solve1, Day02.solve2],
-  [Day03.solve1, Day03.solve2],
-  [Day04.solve1, Day04.solve2],
-  [Day05.solve1, Day05.solve2],
-  [Day06.solve1, Day06.solve2],
-  [Day07.solve1, Day07.solve2],
-  [Day08.solve1, Day08.solve2],
-  [Day09.solve1, Day09.solve2],
-  [Day10.solve1, Day10.solve2]]
+import qualified Day11
 
 {-|
    Provides a common interface for running solvers.
@@ -35,4 +24,15 @@ main :: IO ()
 main = do
   let run fn = getContents >>= print . fn
   [day, part] <- getArgs
-  run $ solvers !! (read day - 1) !! (read part - 1)
+  case (read day, read part) of
+    ( 1, 1) -> run Day01.solve1;  ( 1, 2) -> run Day01.solve2
+    ( 2, 1) -> run Day02.solve1;  ( 2, 2) -> run Day02.solve2
+    ( 3, 1) -> run Day03.solve1;  ( 3, 2) -> run Day03.solve2
+    ( 4, 1) -> run Day04.solve1;  ( 4, 2) -> run Day04.solve2
+    ( 5, 1) -> run Day05.solve1;  ( 5, 2) -> run Day05.solve2
+    ( 6, 1) -> run Day06.solve1;  ( 6, 2) -> run Day06.solve2
+    ( 7, 1) -> run Day07.solve1;  ( 7, 2) -> run Day07.solve2
+    ( 8, 1) -> run Day08.solve1;  ( 8, 2) -> run Day08.solve2
+    ( 9, 1) -> run Day09.solve1;  ( 9, 2) -> run Day09.solve2
+    (10, 1) -> run Day10.solve1;  (10, 2) -> run Day10.solve2
+    (11, 1) -> run Day11.solve1;  (11, 2) -> run Day11.solve2

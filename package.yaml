@@ -25,6 +25,7 @@ dependencies:
 - ghc
 - MissingH
 - split
+- utility-ht
 
 library:
   source-dirs: src
