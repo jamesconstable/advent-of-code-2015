@@ -14,6 +14,7 @@ import qualified Day09
 import qualified Day10
 import qualified Day11
 import qualified Day12
+import qualified Day13
 
 {-|
    Provides a common interface for running solvers.
@@ -38,3 +39,4 @@ main = do
     (10, 1) -> run Day10.solve1;  (10, 2) -> run Day10.solve2
     (11, 1) -> run Day11.solve1;  (11, 2) -> run Day11.solve2
     (12, 1) -> run Day12.solve1;  (12, 2) -> run Day12.solve2
+    (13, 1) -> run Day13.solve1;  (13, 2) -> run Day13.solve2
