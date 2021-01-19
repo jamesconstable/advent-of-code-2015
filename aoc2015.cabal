@@ -39,6 +39,7 @@ library
       Day12
       Day13
       Day14
+      Day15
   other-modules:
       Paths_aoc2015
   hs-source-dirs:
@@ -47,8 +48,10 @@ library
       MissingH
     , base >=4.7 && <5
     , containers
+    , extra
     , ghc
     , json
+    , simple-cmd
     , split
     , utility-ht
   default-language: Haskell2010
@@ -65,8 +68,10 @@ executable aoc2015-exe
     , aoc2015
     , base >=4.7 && <5
     , containers
+    , extra
     , ghc
     , json
+    , simple-cmd
     , split
     , utility-ht
   default-language: Haskell2010
