@@ -16,5 +16,5 @@ The resulting executable takes two command line argument indicating which day
 and part to solve, and reads its input from stdin. For example, to run part 2
 of day 1 with the input in `input.txt`, type:
 ```
-cat input.txt | stack run 1 2
+stack run 1 2 < input.txt
 ```
