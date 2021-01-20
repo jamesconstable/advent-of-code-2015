@@ -18,6 +18,7 @@ import qualified Day13
 import qualified Day14
 import qualified Day15
 import qualified Day16
+import qualified Day17
 
 {-|
    Provides a common interface for running solvers.
@@ -46,4 +47,5 @@ main = do
     (14, 1) -> run Day14.solve1;  (14, 2) -> run Day14.solve2
     (15, 1) -> run Day15.solve1;  (15, 2) -> run Day15.solve2
     (16, 1) -> run Day16.solve1;  (16, 2) -> run Day16.solve2
+    (17, 1) -> run Day17.solve1;  (17, 2) -> run Day17.solve2
     _ -> error "Unrecognised day/part number"

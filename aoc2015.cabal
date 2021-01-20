@@ -41,6 +41,7 @@ library
       Day14
       Day15
       Day16
+      Day17
   other-modules:
       Paths_aoc2015
   hs-source-dirs:
@@ -52,6 +53,7 @@ library
     , extra
     , ghc
     , json
+    , relude
     , simple-cmd
     , split
     , utility-ht
@@ -72,6 +74,7 @@ executable aoc2015-exe
     , extra
     , ghc
     , json
+    , relude
     , simple-cmd
     , split
     , utility-ht

@@ -26,6 +26,7 @@ dependencies:
 - ghc
 - json
 - MissingH
+- relude
 - simple-cmd
 - split
 - utility-ht
