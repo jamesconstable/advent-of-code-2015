@@ -18,6 +18,7 @@ data ItemType = Weapon | Armor | Ring
 
 data Item = Item {
   itemType :: ItemType,
+  name     :: String,
   cost     :: Int,
   damage   :: Int,
   armor    :: Int
@@ -38,22 +39,22 @@ itemAllowance = [
 
 shop :: [Item]
 shop = [
-  Item Weapon 8   4 0,
-  Item Weapon 10  5 0,
-  Item Weapon 25  6 0,
-  Item Weapon 40  7 0,
-  Item Weapon 74  8 0,
-  Item Armor  13  0 1,
-  Item Armor  31  0 2,
-  Item Armor  53  0 3,
-  Item Armor  75  0 4,
-  Item Armor  102 0 5,
-  Item Ring   25  1 0,
-  Item Ring   50  2 0,
-  Item Ring   100 3 0,
-  Item Ring   20  0 1,
-  Item Ring   40  0 2,
-  Item Ring   80  0 3
+  Item Weapon "Dagger"       8 4 0,
+  Item Weapon "Shortsword"  10 5 0,
+  Item Weapon "Warhammer"   25 6 0,
+  Item Weapon "Longsword"   40 7 0,
+  Item Weapon "Greataxe"    74 8 0,
+  Item Armor  "Leather"     13 0 1,
+  Item Armor  "Chainmail"   31 0 2,
+  Item Armor  "Splintmail"  53 0 3,
+  Item Armor  "Bandedmail"  75 0 4,
+  Item Armor  "Platemail"  102 0 5,
+  Item Ring   "Damage +1"   25 1 0,
+  Item Ring   "Damage +2"   50 2 0,
+  Item Ring   "Damage +3"  100 3 0,
+  Item Ring   "Defense +1"  20 0 1,
+  Item Ring   "Defense +2"  40 0 2,
+  Item Ring   "Defense +3"  80 0 3
   ]
 
 solve1 :: [Char] -> Int
@@ -68,7 +69,7 @@ solve2 input =
   let bossStats = readStats input
   in comboCost $ head
     $ filter ((== BossWin) . fightOutcome bossStats . comboStats)
-    $ sortOn ((0 -) . comboCost) validCombos
+    $ sortOn (negate . comboCost) validCombos
 
 readStats :: String -> Stats
 readStats input =
