@@ -2,12 +2,11 @@
 
 module Day22 (solve1, solve2) where
 
+import Data.Bifunctor (second)
 import Data.Maybe (fromJust, mapMaybe)
-import Data.List (foldl', sortOn, subsequences)
+import Data.List (foldl')
 import Data.List.Split (splitOn)
 import Data.Tuple (swap)
-
-import Debug.Trace (traceShow, traceShowId)
 
 import qualified Data.Heap as H
 
@@ -16,88 +15,106 @@ import qualified Data.Heap as H
   Problem description: https://adventofcode.com/2015/day/22
 -}
 
-data Turn = Player | Boss
-  deriving (Eq, Show)
-
-data State = State Turn Stats Stats [String]
-  deriving Show
-
 data Stats = Stats {
   hitPoints :: Int,
   mana      :: Int,
   damage    :: Int,
   armor     :: Int,
-  effects   :: [(String, [(Stats, Stats) -> (Stats, Stats)])]
+  actions   :: [Action],
+  effects   :: [Effect]
   }
 
-data Spell = Spell {
-  name   :: String,
+data Turn = Player | Boss
+  deriving Eq
+
+data State = State Turn Stats Stats
+
+-- Effects have a name and a list of functions that are applied one-per-turn
+-- until the list is exhausted (after which the Effect ends). 'Instant' spells
+-- and actions are represented as single-turn Effects. Function tuples are of
+-- the form (self, target).
+data Effect = Effect String [(Stats, Stats) -> (Stats, Stats)]
+
+instance Eq Effect where
+  Effect n1 _ == Effect n2 _ = n1 == n2
+
+data Action = Action {
   cost   :: Int,
-  effect :: [(Stats, Stats) -> (Stats, Stats)]
+  effect :: Effect
   }
 
-instance Show Stats where
-  show Stats{hitPoints = hp, mana = m, damage = d, armor = a, effects = es} =
-    "(Stats " <> show hp <> " " <> show m <> " " <> show d <> " " <> show a
-    <> " " <> show (map fst es) <> ")"
+solve1 :: [Char] -> Int
+solve1 = minimumWinCost basePlayer . readBossStats
+
+solve2 :: [Char] -> Int
+solve2 = minimumWinCost basePlayer { effects = [hardMode] } . readBossStats
+  where
+    hardMode = Effect "Hard Mode" $
+      cycle [\(s, t) -> (s { hitPoints = hitPoints s - 1 }, t), id]
 
 baseStats :: Stats
 baseStats = Stats {
-  hitPoints    = 0,
-  mana         = 0,
-  damage       = 0,
-  armor        = 0,
-  effects = []
+  hitPoints = 0,
+  mana      = 0,
+  damage    = 0,
+  armor     = 0,
+  actions   = [],
+  effects   = []
   }
 
-spells :: [Spell]
-spells = [
-  Spell {
-    name   = "Magic Missile",
-    cost   = 53,
-    effect = [\(s, t) -> (s, t{hitPoints = hitPoints t - 4})]
-    },
-  Spell {
-    name   = "Drain",
-    cost   = 73,
-    effect = [\(s, t) -> (s{hitPoints = min 50 (hitPoints s + 2)},
-                          t{hitPoints = hitPoints t - 2})]
-    },
-  Spell {
-    name   = "Shield",
-    cost   = 113,
-    effect = [\(s, t) -> (s{armor = armor s + 7}, t), id, id, id, id,
-              \(s, t) -> (s{armor = armor s - 7}, t)]
-    },
-  Spell {
-    name   = "Poison",
-    cost   = 173,
-    effect = replicate 6 (\(s, t) -> (s, t{hitPoints = hitPoints t - 3}))
-    },
-  Spell {
-    name   = "Recharge",
-    cost   = 229,
-    effect = replicate 5 (\(s, t) -> (s{mana = mana s + 101}, t))
+basePlayer :: Stats
+basePlayer = baseStats {
+  hitPoints = 50,
+  mana = 500,
+  actions = [
+    Action {
+      cost   = 53,
+      effect = Effect "Magic Missile"
+        [\(s, t) -> (s, t { hitPoints = hitPoints t - 4 })]
+      },
+    Action {
+      cost   = 73,
+      effect = Effect "Drain"
+        [\(s, t) -> (s { hitPoints = hitPoints s + 2 },
+                     t { hitPoints = hitPoints t - 2 })]
+      },
+    Action {
+      cost   = 113,
+      effect = Effect "Shield"
+        [\(s, t) -> (s { armor = armor s + 7 }, t), id, id, id, id,
+         \(s, t) -> (s { armor = armor s - 7 }, t)]
+      },
+    Action {
+      cost   = 173,
+      effect = Effect "Poison"
+        (replicate 6 (\(s, t) -> (s, t { hitPoints = hitPoints t - 3 })))
+      },
+    Action {
+      cost   = 229,
+      effect = Effect "Recharge"
+        (replicate 5 (\(s, t) -> (s { mana = mana s + 101 }, t)))
+      }
+    ]
+  }
+
+readBossStats :: String -> Stats
+readBossStats input =
+  let [[_, hp], [_, d]] = splitOn ": " <$> lines input
+  in baseStats {
+    hitPoints = read hp,
+    damage = read d,
+    actions = [
+      Action {
+        cost   = 0,
+        effect = Effect "Attack" [\(s, t) ->
+          (s, t { hitPoints = hitPoints t - max 1 (damage s - armor t) })]
+        }
+      ]
     }
-  ]
 
-solve1 :: [Char] -> Int
-solve1 = fromJust . uniformCostSearch expandFringe isPlayerWin
-  . (\b -> State Player playerStats b []) . readStats
-  where playerStats = baseStats { hitPoints = 50, mana = 500 }
-
-solve2 :: [Char] -> Int
-solve2 = fromJust . uniformCostSearch expandFringe isPlayerWin
-  . (\b -> State Player playerStats b []) . readStats
-  where
-    slowDeath = cycle [\(s, t) -> (s{hitPoints = hitPoints s - 1}, t), id]
-    playerStats = baseStats { hitPoints = 50, mana = 500,
-      effects = [("Slow Death", slowDeath)] }
-
-readStats :: String -> Stats
-readStats input =
-  let [[_, hp], [_, damage]] = splitOn ": " <$> lines input
-  in baseStats { hitPoints = read hp, damage = read damage }
+minimumWinCost :: Stats -> Stats -> Int
+minimumWinCost player boss = fromJust
+  $ uniformCostSearch expandFringe isPlayerWin $ State Player player boss
 
 uniformCostSearch :: (State -> [(Int, State)]) -> (State -> Bool) -> State
                   -> Maybe Int
@@ -112,34 +129,47 @@ uniformCostSearch generateFn isGoal = search . H.singleton . H.Entry 0
           $ map (\(c, s) -> H.Entry (cost + c) s) $ generateFn curr
 
 isPlayerWin :: State -> Bool
-isPlayerWin (State _ player boss _) = isAlive player && not (isAlive boss)
+isPlayerWin (State _ player boss) = isAlive player && isDead boss
 
 isAlive :: Stats -> Bool
 isAlive = (> 0) . hitPoints
 
+isDead :: Stats -> Bool
+isDead = not . isAlive
+
 expandFringe :: State -> [(Int, State)]
-expandFringe (State turn player boss path) =
-  case turn of
-    Boss   -> [(0, State Player (boss' `attack` player') boss' path)]
-    Player -> map (\(c, p, spell) -> (c, State Boss p boss' (spell:path)))
-      $ mapMaybe (player' `cast`) spells
+expandFringe (State turn player boss)
+  -- If the player is already dead once effects have been applied, prune the
+  -- game tree at this point.
+  | isDead player' = []
+
+  -- If the boss dies from effects, don't take any actions, but still add the
+  -- outcome to the game tree so the win condition will be triggered.
+  | isDead boss' = [(0, State turn' player' boss')]
+
+  | otherwise = case turn of
+      Boss   -> second (\b -> State turn' player' b) <$> tryAllActions boss'
+      Player -> second (\p -> State turn' p boss') <$> tryAllActions player'
+
   where
-    (player', boss') = uncurry applySpells $ swap $ applySpells boss player
+    (player', boss') = uncurry applyActions $ swap $ applyActions boss player
+    turn' = if turn == Player then Boss else Player
+    tryAllActions p = mapMaybe (p `tryAction`) (actions p)
 
-    attack p1 p2 =
-      if isAlive p1  -- Can't attack if already dead from spell damage
-      then p2 { hitPoints = hitPoints p2 - max 1 (damage p1 - armor p2)}
-      else p2
+tryAction :: Stats -> Action -> Maybe (Int, Stats)
+tryAction p Action{cost = c, effect = e} =
+  -- To be successful, the player must (a) have enough mana, and (b) not have a
+  -- prior invocation of that action still in effect.
+  if c <= mana p && e `notElem` effects p
+  then Just (c, p { mana = mana p - c, effects = e : effects p })
+  else Nothing
 
-    cast p@Stats{mana = m, effects = es}
-         Spell{name = spellName, cost = c, effect = e} =
-      if isAlive p && c <= m && spellName `notElem` map fst es
-      then Just (c, p { mana = m - c, effects = (spellName, e):es }, spellName)
-      else Nothing
-
-applySpells :: Stats -> Stats -> (Stats, Stats)
-applySpells self target = (self' { effects = effs' }, target')
+applyActions :: Stats -> Stats -> (Stats, Stats)
+applyActions self target = (self' { effects = effs' }, target')
   where
     effs = effects self
-    (self', target') = foldl' (\s (_, e:_) -> e s) (self, target) effs
-    effs' = filter (not . null . snd) $ map (\(n, _:es) -> (n, es)) effs
+    (self', target') = foldl' (\s (Effect _ (e:_)) -> e s) (self, target) effs
+    effs' = filter notEnded $ map (\(Effect n (_:es)) -> Effect n es) effs
+
+notEnded :: Effect -> Bool
+notEnded (Effect _ es) = not (null es)
