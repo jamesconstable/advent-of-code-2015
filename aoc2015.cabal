@@ -46,6 +46,7 @@ library
       Day19
       Day20
       Day21
+      Day22
   other-modules:
       Paths_aoc2015
   hs-source-dirs:
@@ -56,6 +57,7 @@ library
     , containers
     , extra
     , ghc
+    , heaps
     , json
     , relude
     , simple-cmd
@@ -77,6 +79,7 @@ executable aoc2015-exe
     , containers
     , extra
     , ghc
+    , heaps
     , json
     , relude
     , simple-cmd
