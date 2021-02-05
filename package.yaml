@@ -26,6 +26,7 @@ dependencies:
 - ghc
 - heaps
 - json
+- lens
 - MissingH
 - relude
 - simple-cmd

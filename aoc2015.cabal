@@ -59,6 +59,7 @@ library
     , ghc
     , heaps
     , json
+    , lens
     , relude
     , simple-cmd
     , split
@@ -81,6 +82,7 @@ executable aoc2015-exe
     , ghc
     , heaps
     , json
+    , lens
     , relude
     , simple-cmd
     , split
